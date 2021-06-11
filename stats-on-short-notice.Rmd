@@ -213,7 +213,7 @@ knitr::include_graphics("stats-on-short-notice_files/chart-types-1.png")
 
 # Plotting numeric variables on categories
 
-```{r}
+```{r, fig.height=4, warning = F}
 
 ggplot(penguins, aes(x = species, y= body_mass_g, fill = species)) + 
   geom_boxplot()
