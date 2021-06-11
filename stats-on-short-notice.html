@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Statistics on Short Notice</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Paulius Alaburda" />
+    <meta name="date" content="2021-06-12" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Statistics on Short Notice
+### Paulius Alaburda
+### 2021-06-12
+
+---
+
+
+
+
+
+
+# 👋 Hi! 
+
+.pull-left[
+
+## So what's the secret?
+
+Research is not about which tool you use or which statistical test you use. It's all about principles of looking at your data and understanding variation in your data.
+
+]
+
+.pull-right[
+
+## Presentation content
+
+1. Storing your data
+
+1. Exploring the data
+
+1. Choosing tables and figures
+
+1. Choosing statistical tests
+
+1. Reporting statistical tests
+]
+
+
+---
+
+# Before you even start...
+
+Three principles of tidy data:
+
+
+1. Each variable must have its own column.
+1. Each observation must have its own row.
+1. Each value must have its own cell.
+
+![](https://raw.githubusercontent.com/hadley/r4ds/master/images/tidy-1.png)
+
+In case of concurrent diseases, multiple responses in questionnaires, it's better to use more columns or more rows to store your data.
+
+---
+
+# Further reading on tidy data
+
+1. Kara Woo, [Data Organization in Spreadsheets](https://www.tandfonline.com/doi/full/10.1080/00031305.2017.1375989)
+2. Hadley Wickham, [R for Data Science](https://r4ds.had.co.nz/)
+
+---
+
+
+# Exploratory Data Analysis
+
+Exploring your data can be done in a variety of ways but in 95% you usually want to:
+
+
+1. Create histograms of continuous variables
+1. Create counts of categorical variables
+1. Create scatterplots of two continuous variables
+
+
+---
+
+# Histograms
+
+A histogram is a type of plot that places your numeric data into bins or intervals.
+
+
+```r
+library(ggplot2)
+library(tidyverse)
+library(palmerpenguins)
+
+ggplot(penguins, aes(x = bill_length_mm)) + geom_histogram()
+```
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+---
+
+# Counting categorical variables
+
+Creating count tables lets you see how many unique values you actually have in a column and whether there were any data entry errors, resulting in unexpected counts.
+
+
+```r
+penguins %&gt;% count(island)
+```
+
+```
+## # A tibble: 3 x 2
+##   island        n
+##   &lt;fct&gt;     &lt;int&gt;
+## 1 Biscoe      168
+## 2 Dream       124
+## 3 Torgersen    52
+```
+
+---
+
+# Scatterplots
+
+A scatterplot is a two-dimensional plot that shows the distribution of two numeric variables against each other.
+
+
+```r
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) + 
+  geom_point()
+```
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+---
+
+# Anscombe's Quartet
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Anscombe%27s_quartet_3.svg/800px-Anscombe%27s_quartet_3.svg.png)
+---
+
+# Simpson's Paradox
+
+.pull-left[
+
+Something seems off...
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+
+]
+
+.pull-right[
+
+...that's because it is!
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+
+]
+
+---
+
+# Table 1
+
+"Table 1" is a table in a paper that summarises the key variables in your dataset. An example using the `gtsummary` package in R:
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#bpscrxbmid .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bpscrxbmid .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bpscrxbmid .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bpscrxbmid .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bpscrxbmid .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bpscrxbmid .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bpscrxbmid .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bpscrxbmid .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bpscrxbmid .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bpscrxbmid .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bpscrxbmid .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bpscrxbmid .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bpscrxbmid .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#bpscrxbmid .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bpscrxbmid .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bpscrxbmid .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bpscrxbmid .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bpscrxbmid .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bpscrxbmid .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#bpscrxbmid .gt_left {
+  text-align: left;
+}
+
+#bpscrxbmid .gt_center {
+  text-align: center;
+}
+
+#bpscrxbmid .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bpscrxbmid .gt_font_normal {
+  font-weight: normal;
+}
+
+#bpscrxbmid .gt_font_bold {
+  font-weight: bold;
+}
+
+#bpscrxbmid .gt_font_italic {
+  font-style: italic;
+}
+
+#bpscrxbmid .gt_super {
+  font-size: 65%;
+}
+
+#bpscrxbmid .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="bpscrxbmid" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Drug A</strong>, N = 98<sup class="gt_footnote_marks">1</sup></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1"><strong>Drug B</strong>, N = 102<sup class="gt_footnote_marks">1</sup></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Age</td>
+      <td class="gt_row gt_center">46 (37, 59)</td>
+      <td class="gt_row gt_center">48 (39, 56)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Grade</td>
+      <td class="gt_row gt_center"></td>
+      <td class="gt_row gt_center"></td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">I</td>
+      <td class="gt_row gt_center">35 (36%)</td>
+      <td class="gt_row gt_center">33 (32%)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">II</td>
+      <td class="gt_row gt_center">32 (33%)</td>
+      <td class="gt_row gt_center">36 (35%)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left" style="text-align: left; text-indent: 10px;">III</td>
+      <td class="gt_row gt_center">31 (32%)</td>
+      <td class="gt_row gt_center">33 (32%)</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Tumor Response</td>
+      <td class="gt_row gt_center">28 (29%)</td>
+      <td class="gt_row gt_center">33 (34%)</td>
+    </tr>
+  </tbody>
+  
+  <tfoot>
+    <tr class="gt_footnotes">
+      <td colspan="3">
+        <p class="gt_footnote">
+          <sup class="gt_footnote_marks">
+            <em>1</em>
+          </sup>
+           
+          Median (IQR); n (%)
+          <br />
+        </p>
+      </td>
+    </tr>
+  </tfoot>
+</table></div>
+
+---
+
+# Further reading on tables
+
+1. [Who is in this study, anyway? Guidelines for a useful Table 1](https://www.sciencedirect.com/science/article/abs/pii/S0895435618309867)
+1. [gtsummary package](http://www.danieldsjoberg.com/gtsummary/)
+
+---
+
+# Figures!
+
+Any modern piece of software can prepare a nice chart - it's all a matter of knowing which one to use!
+
+&lt;img src="stats-on-short-notice_files/chart-types-1.png" width="1519" /&gt;
+
+---
+
+# Plotting numeric variables on categories
+
+
+```r
+ggplot(penguins, aes(x = species, y= body_mass_g, fill = species)) + 
+  geom_boxplot()
+```
+
+```
+## Warning: Removed 2 rows containing non-finite values (stat_boxplot).
+```
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+# Hold up, what's a boxplot?
+
+&lt;img src="stats-on-short-notice_files/boxplot-1.png" width="1847" /&gt;
+
+---
+
+# Categorical data
+
+.pull-left[
+
+You could do a heatmap...
+
+&lt;img src="stats-on-short-notice_files/categorical-1.png" width="689" /&gt;
+
+
+]
+
+.pull-right[
+
+...but usually it's a bar chart.
+
+
+```r
+ggplot(penguins, aes(x = species)) + 
+  geom_bar()
+```
+
+![](stats-on-short-notice_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Further resources on charts
+
+1. [Data to Viz](https://www.data-to-viz.com/)
+2. [ggplot2 book](https://ggplot2-book.org/)
+3. [Data Visualization: a Practical Introduction](https://socviz.co/)
+4. [R Graphics Cookbook](https://r-graphics.org/)
+
+---
+
+# Can I please do statistics now?
+
+If your research question is simple enough, consult the flowchart and go nuts!
+
+&lt;img src="stats-on-short-notice_files/statistical-tests-1.png" width="907" /&gt;
+
+---
+
+# What if I would like to do some "real" statistics?
+
+.pull-left[
+
+* What are you trying to estimate?
+* Learn about linear models - robust in most cases
+* Consult heavily any of the resources in the references!
+
+]
+
+
+.pull-right[
+
+![](https://lindeloev.github.io/tests-as-linear/index_files/figure-html/unnamed-chunk-4-1.png)
+
+]
+
+---
+
+# General guidelines for presenting statistics
+
+.pull-left[
+
+* If the p value is larger than 0.001, always report an exact value
+* Report any additional summary statistics along with the p value (e.g. Student's t value)
+* If doing ANOVA, t-test, ALWAYS report the mean difference and the 95% confidence interval
+
+]
+
+.pull-right[
+
+![](stats-on-short-notice_files/E3m7DLYUYAkwlwK.jpg)&lt;!-- --&gt; 
+
+]
+
+---
+
+# More References!
+
+1. [RCompanion](https://rcompanion.org/rcompanion/index.html)
+2. [Learning Statistics with R](https://learningstatisticswithr.com/lsr-0.6.pdf)
+3. [Report package](https://github.com/easystats/report)
+4. [All tests are linear tests](https://lindeloev.github.io/tests-as-linear/)
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
